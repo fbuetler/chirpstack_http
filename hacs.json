@@ -1,0 +1,5 @@
+{
+    "name": "Chirpstack HTTP",
+    "hacs": "1.6.0",
+    "homeassistant": "2024.11.0"
+}
