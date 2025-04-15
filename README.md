@@ -49,14 +49,14 @@ mv
 
 If you encounter any issues or have questions, please [open an issue][issues] on GitHub.
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/your-username/chirpstack_http.svg
-[commits]: https://github.com/your-username/chirpstack_http/commits/main
+[commits-shield]: https://img.shields.io/github/commit-activity/y/AlexAsplund/chirpstack_http.svg
+[commits]: https://github.com/AlexAsplund/chirpstack_http/commits/main
 [hacs]: https://github.com/hacs/integration
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg
-[issues]: https://github.com/your-username/chirpstack_http/issues
-[license]: https://github.com/your-username/chirpstack_http/blob/main/LICENSE
-[license-shield]: https://img.shields.io/github/license/your-username/chirpstack_http.svg
+[issues]: https://github.com/AlexAsplund/chirpstack_http/issues
+[license]: https://github.com/AlexAsplund/chirpstack_http/blob/main/LICENSE
+[license-shield]: https://img.shields.io/github/license/AlexAsplund/chirpstack_http.svg
 [maintenance-shield]: https://img.shields.io/badge/maintainer-%40your--username-blue.svg
-[releases-shield]: https://img.shields.io/github/release/your-username/chirpstack_http.svg
-[releases]: https://github.com/your-username/chirpstack_http/releases
-[user_profile]: https://github.com/your-username
+[releases-shield]: https://img.shields.io/github/release/AlexAsplund/chirpstack_http.svg
+[releases]: https://github.com/AlexAsplund/chirpstack_http/releases
+[user_profile]: https://github.com/AlexAsplund
