@@ -51,4 +51,5 @@ def detect_unit(key):
             if device_class:
                 return device_class
             return [unit, device_class]
+    return [None,None]
 

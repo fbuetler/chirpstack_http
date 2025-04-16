@@ -68,7 +68,7 @@ If you encounter any issues or have questions, please [open an issue][issues] on
 [issues]: https://github.com/AlexAsplund/chirpstack_http/issues
 [license]: https://github.com/AlexAsplund/chirpstack_http/blob/main/LICENSE
 [license-shield]: https://img.shields.io/github/license/AlexAsplund/chirpstack_http.svg
-[maintenance-shield]: https://img.shields.io/badge/maintainer-%40your--username-blue.svg
+[maintenance-shield]: https://img.shields.io/badge/maintainer-%40AlexASplund-blue.svg
 [releases-shield]: https://img.shields.io/github/release/AlexAsplund/chirpstack_http.svg
 [releases]: https://github.com/AlexAsplund/chirpstack_http/releases
 [user_profile]: https://github.com/AlexAsplund
