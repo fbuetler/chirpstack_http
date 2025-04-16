@@ -7,7 +7,7 @@ from homeassistant.helpers.event import async_track_time_interval
 from datetime import timedelta
 import logging
 import json
-from .http import ChirpstackWebhookView
+from .http import ChirpstackHttpView
 
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = "chirpstack_http"
@@ -46,11 +46,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         hass, _save_states, SAVE_INTERVAL
     )
     
-    # Register the webhook view
+    # Register the view
     url_suffix = config_entry.data["url_suffix"]
     header_name = config_entry.data.get("header_name")
     header_value = config_entry.data.get("header_value")
-    hass.http.register_view(ChirpstackWebhookView(hass, entry_id, url_suffix, header_name, header_value))
+    hass.http.register_view(ChirpstackHttpView(hass, entry_id, url_suffix, header_name, header_value))
     
     # Set up platforms
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)

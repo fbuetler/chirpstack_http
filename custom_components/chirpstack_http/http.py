@@ -5,7 +5,7 @@ import re
 from homeassistant.components.http import HomeAssistantView
 from .sensor import ChirpstackSensor
 from .binary_sensor import ChirpstackBinarySensor
-
+from .helpers import detect_unit
 DOMAIN = "chirpstack_http"
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,24 +20,6 @@ def flatten_dict(d, parent_key='', sep='_'):
         else:
             items.append((new_key, v))
     return dict(items)
-
-
-def detect_unit(key):
-    """Detect unit of measurement based on key name."""
-    key_l = key.lower()
-    if "temp" in key_l:
-        return "°C"
-    elif "humid" in key_l:
-        return "%"
-    elif "battery" in key_l or "voltage" in key_l:
-        return "V"
-    elif "rssi" in key_l:
-        return "dBm"
-    elif "snr" in key_l:
-        return "dB"
-    # Add more mappings as needed
-    return None
-
 
 def sanitize_value(value, key=None):
     """Convert value to proper type and format."""
@@ -73,7 +55,7 @@ def sanitize_value(value, key=None):
     return value
 
 
-class ChirpstackWebhookView(HomeAssistantView):
+class ChirpstackHttpView(HomeAssistantView):
     """View to handle ChirpStack webhook requests."""
     
     def __init__(self, hass, entry_id, url_suffix, header_name=None, header_value=None):

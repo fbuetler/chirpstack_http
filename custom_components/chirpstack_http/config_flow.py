@@ -16,7 +16,7 @@ class ChirpstackHttpConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             # Create entry with user input data
             return self.async_create_entry(
-                title=f"Webhook: /api/chirpstack_http/{url_suffix}",
+                title=f"/api/chirpstack_http/{url_suffix}",
                 data={
                     "url_suffix": url_suffix,
                     "header_name": header_name,
