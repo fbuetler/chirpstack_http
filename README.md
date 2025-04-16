@@ -9,6 +9,18 @@
 
 A Home Assistant integration that allows you to receive LoRaWAN device data from ChirpStack via HTTP integration.
 
+## Features
+
+  * Creates devices with binary_sensors and sensors.
+  * Basic unit of measurement detection.
+  * Supports configuring multiple platforms / endpoints.
+  * Header authentication.
+
+## Requirements
+
+  * Your home assistant http port to be accessible from chirpstack.
+  * Chirpstack needs to decode the uplink with a codec. This component does not support decoding.
+
 ## Installation
 
 ### HACS (Recommended)
@@ -36,15 +48,15 @@ A Home Assistant integration that allows you to receive LoRaWAN device data from
 1. In your ChirpStack application, go to **Integrations** > **HTTP**.
 2. Add a new HTTP integration with the following URL:
     ```
-    http://your-home-assistant-url:8123/api/webhook/chirpstack_http/<url_suffix>
+    http://your-home-assistant-url:8123/api/chirpstack_http/<url_suffix>
     ```
-3. OPTIONAL: Add http header and value if you configured the configuration with it in home assistant.
+3. OPTIONAL: Add http header and value if you configured it in home assistant.
 4. Ensure your Home Assistant instance is accessible from your ChirpStack server.
 
 ## Usage
 
 Once configured, the integration will create sensors for each data point received from your ChirpStack devices.
-mv 
+
 ## Support
 
 If you encounter any issues or have questions, please [open an issue][issues] on GitHub.
