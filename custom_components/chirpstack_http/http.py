@@ -131,7 +131,8 @@ class ChirpstackHttpView(HomeAssistantView):
                 
                 # Generate unique ID and friendly name
                 unique_id = f"{device_id}_{key}"
-                name = f"{device_info['deviceName']} {key.replace('_', ' ').title()}"
+                name_suffix = ' '.join(list(map(lambda x: x.capitalize(), key.replace("_", " ").split(" "))))
+                name = f"{device_info['deviceName']} {name_suffix}"
                 
                 # Sanitize the value
                 sanitized_value = sanitize_value(raw_value, key)

@@ -36,7 +36,7 @@ SENSOR_DETECTION_MAP = [
         SIGNAL_STRENGTH_DECIBELS
     ],
     [
-        r"( ec | ec$)",
+        r"( ec | ec$ |electrical.?conductivity)",
         SensorDeviceClass.CONDUCTIVITY,
         UnitOfConductivity.MILLISIEMENS_PER_CM
     ],
