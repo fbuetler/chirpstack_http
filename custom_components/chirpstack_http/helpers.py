@@ -50,8 +50,5 @@ def detect_unit(key):
         if re.search(pattern, key_l):
             if device_class:
                 return device_class
-            return {
-                "unit": unit,
-                "device_class": device_class
-            }
+            return [unit, device_class]
 

@@ -157,9 +157,9 @@ class ChirpstackHttpView(HomeAssistantView):
                     new_binary_sensors.append(entity)
                 else:
                     # Create sensor with appropriate unit
-                    unit = detect_unit(key)
+                    unit, device_class = detect_unit(key)
                     _LOGGER.info(f"Creating sensor: {name} = {sanitized_value} {unit}")
-                    entity = ChirpstackSensor(device_id, name, unit, unique_id, device_info)
+                    entity = ChirpstackSensor(device_id, name, device_class, unit, unique_id, device_info)
                     new_sensors.append(entity)
                 
                 # Store in devices dict
