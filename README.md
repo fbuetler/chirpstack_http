@@ -36,7 +36,7 @@ A Home Assistant integration that allows you to receive LoRaWAN device data from
 1. In your ChirpStack application, go to **Integrations** > **HTTP**.
 2. Add a new HTTP integration with the following URL:
     ```
-    http://your-home-assistant-url:8123/api/webhook/chirpstack_http/\<url_suffix>
+    http://your-home-assistant-url:8123/api/webhook/chirpstack_http/<url_suffix>
     ```
 3. OPTIONAL: Add http header and value if you configured the configuration with it in home assistant.
 4. Ensure your Home Assistant instance is accessible from your ChirpStack server.
