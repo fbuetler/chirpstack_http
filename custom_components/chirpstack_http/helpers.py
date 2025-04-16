@@ -2,8 +2,9 @@ import re
 from homeassistant.const import UnitOfConductivity, UnitOfTemperature, UnitOfElectricPotential
 from homeassistant.const import PERCENTAGE, SIGNAL_STRENGTH_DECIBELS, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.components.sensor import SensorDeviceClass
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 
-DETECTION_MAP = [
+SENSOR_DETECTION_MAP = [
     [
         r"temp",
         SensorDeviceClass.TEMPERATURE,
@@ -41,13 +42,54 @@ DETECTION_MAP = [
     ],
 ]
 
-
-def detect_unit(key):
+BINARY_SENSOR_DETECTION_MAP = [
+    [
+        r"closed",
+        BinarySensorDeviceClass.DOOR,
+    ],
+    [
+        r"motion",
+        SensorDeviceClass.MOTION
+    ]
+]
+def detect_sensor_unit(*args):
     """Detect unit of measurement based on key name."""
-    key_l = key.lower()
-    
-    for pattern, device_class, unit in DETECTION_MAP:
-        if re.search(pattern, key_l):
-            return [unit, device_class]
+    for key in args:
+        if key is None:
+            continue
+        key_l = key.lower()
+        key_u = key.upper()
+        if "," in key:
+            found_class,found_unit = key.split(",")
+        if found_class or found_unit:
+            found_class = found_class.strip()
+            found_unit = found_unit.strip()
+            if found_class.upper() in SensorDeviceClass.__dict__:
+                return [found_unit, SensorDeviceClass.__dict__[found_class]]
+            else:
+                return [found_unit, None]
+            
+        if key_u in SensorDeviceClass.__dict__:
+            return [None, SensorDeviceClass.__dict__[key_u]]
+        
+        for pattern, device_class, unit in SENSOR_DETECTION_MAP:
+            if re.search(pattern, key_l):
+                return [unit, device_class]
     return [None,None]
 
+def detect_binary_sensor_device_class(*args):
+    """Detect unit of measurement based on key name."""
+    for key in args:
+        
+        if key is None:
+            continue
+        key_l = key.lower()
+        key_u = key.upper()
+        
+        if key_u in BinarySensorDeviceClass.__dict__:
+            return BinarySensorDeviceClass.__dict__[key_u]
+        
+        for pattern, device_class in BINARY_SENSOR_DETECTION_MAP:
+            if re.search(pattern, key_l):
+                return device_class
+    return None

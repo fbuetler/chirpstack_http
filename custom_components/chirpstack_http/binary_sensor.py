@@ -10,11 +10,13 @@ DOMAIN = "chirpstack_http"
 class ChirpstackBinarySensor(BinarySensorEntity, RestoreEntity):
     """Representation of a ChirpStack binary sensor."""
     
-    def __init__(self, device_id, name, unique_id, device_info):
+    def __init__(self, device_id, device_class, name, unique_id, device_info):
         """Initialize the binary sensor."""
         self._device_id = device_id
         self._attr_name = name
         self._attr_unique_id = unique_id
+        if device_class:
+            self._attr_device_class = device_class
         
         # Create device info
         self._attr_device_info = DeviceInfo(

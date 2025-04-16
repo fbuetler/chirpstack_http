@@ -5,7 +5,7 @@ import re
 from homeassistant.components.http import HomeAssistantView
 from .sensor import ChirpstackSensor
 from .binary_sensor import ChirpstackBinarySensor
-from .helpers import detect_unit
+from .helpers import detect_sensor_unit, detect_binary_sensor_device_class
 DOMAIN = "chirpstack_http"
 _LOGGER = logging.getLogger(__name__)
 
@@ -149,15 +149,18 @@ class ChirpstackHttpView(HomeAssistantView):
                 stored_state = stored_states.get(key, {})
                 initial_value = sanitized_value
                 
+                detection_keys = [object_data.get("type_ref", {}).get(key, None), key]
+                
                 # Determine if boolean or sensor
                 if isinstance(sanitized_value, bool):
                     # Create binary sensor
+                    device_class = detect_binary_sensor_device_class(*detection_keys)
                     _LOGGER.info(f"Creating binary sensor: {name} = {sanitized_value}")
-                    entity = ChirpstackBinarySensor(device_id, name, unique_id, device_info)
+                    entity = ChirpstackBinarySensor(device_id,  device_class, name, unique_id, device_info)
                     new_binary_sensors.append(entity)
                 else:
                     # Create sensor with appropriate unit
-                    unit, device_class = detect_unit(key)
+                    unit, device_class = detect_sensor_unit(*detection_keys)
                     _LOGGER.info(f"Creating sensor: {name} = {sanitized_value} {unit}")
                     entity = ChirpstackSensor(device_id, name, device_class, unit, unique_id, device_info)
                     new_sensors.append(entity)
