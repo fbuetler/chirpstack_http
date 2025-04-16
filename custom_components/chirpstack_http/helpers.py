@@ -1,6 +1,6 @@
 import re
-from homeassistant.const import UnitOfConductivity, UnitOfTemperature
-from homeassistant.const import PERCENTAGE, VOLT, SIGNAL_STRENGTH_DECIBELS, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
+from homeassistant.const import UnitOfConductivity, UnitOfTemperature, UnitOfElectricPotential
+from homeassistant.const import PERCENTAGE, SIGNAL_STRENGTH_DECIBELS, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.components.sensor import SensorDeviceClass
 
 DETECTION_MAP = [
@@ -22,7 +22,7 @@ DETECTION_MAP = [
     [
         r"voltage",
         SensorDeviceClass.VOLTAGE,
-        VOLT
+        UnitOfElectricPotential.VOLT
     ],
     [
         r"rssi",
