@@ -48,8 +48,6 @@ def detect_unit(key):
     
     for pattern, device_class, unit in DETECTION_MAP:
         if re.search(pattern, key_l):
-            if device_class:
-                return device_class
             return [unit, device_class]
     return [None,None]
 
