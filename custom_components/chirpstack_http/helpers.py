@@ -1,13 +1,13 @@
 import re
-from homeassistant.const import UnitOfConductivity
-from homeassistant.const import PERCENTAGE, TEMP_CELSIUS, VOLT, SIGNAL_STRENGTH_DECIBELS, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
+from homeassistant.const import UnitOfConductivity, UnitOfTemperature
+from homeassistant.const import PERCENTAGE, VOLT, SIGNAL_STRENGTH_DECIBELS, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.components.sensor import SensorDeviceClass
 
 DETECTION_MAP = [
     [
         r"temp",
         SensorDeviceClass.TEMPERATURE,
-        TEMP_CELSIUS
+        UnitOfTemperature.CELSIUS
     ],
     [
         r"humid",
