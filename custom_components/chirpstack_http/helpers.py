@@ -44,14 +44,35 @@ SENSOR_DETECTION_MAP = [
 
 BINARY_SENSOR_DETECTION_MAP = [
     [
-        r"closed",
+        r"closed|open",
         BinarySensorDeviceClass.DOOR,
     ],
     [
         r"motion",
-        SensorDeviceClass.MOTION
-    ]
+        BinarySensorDeviceClass.MOTION,
+    ],
+    [
+        r"open",
+        BinarySensorDeviceClass.DOOR,
+    ],
+    [
+        r"occupancy",
+        BinarySensorDeviceClass.OCCUPANCY,
+    ],
+    [
+        r"presence",
+        BinarySensorDeviceClass.PRESENCE,
+    ],
+    [
+        r"tamper",
+        BinarySensorDeviceClass.TAMPER,
+    ],
+    [
+        r"water",
+        BinarySensorDeviceClass.MOISTURE,
 ]
+    
+    
 def detect_sensor_unit(*args):
     """Detect unit of measurement based on key name."""
     for key in args:
