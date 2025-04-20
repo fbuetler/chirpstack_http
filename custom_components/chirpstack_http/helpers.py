@@ -69,7 +69,8 @@ BINARY_SENSOR_DETECTION_MAP = [
     ],
     [
         r"water",
-        BinarySensorDeviceClass.MOISTURE,
+        BinarySensorDeviceClass.MOISTURE
+    ]
 ]
     
     
