@@ -4,6 +4,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.restore_state import RestoreEntity
 import logging
 
+
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = "chirpstack_http"
 
