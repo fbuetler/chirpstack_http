@@ -77,6 +77,8 @@ BINARY_SENSOR_DETECTION_MAP = [
 def detect_sensor_unit(*args):
     """Detect unit of measurement based on key name."""
     for key in args:
+        found_class = None
+        found_unit = None
         if key is None:
             continue
         key_l = key.lower()
