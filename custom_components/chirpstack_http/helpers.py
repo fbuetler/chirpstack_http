@@ -3,6 +3,11 @@ from homeassistant.const import UnitOfConductivity, UnitOfTemperature, UnitOfEle
 from homeassistant.const import PERCENTAGE, SIGNAL_STRENGTH_DECIBELS, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+import logging
+
+
+_LOGGER = logging.getLogger(__name__)
+DOMAIN = "chirpstack_http"
 
 SENSOR_DETECTION_MAP = [
     [
@@ -76,6 +81,8 @@ BINARY_SENSOR_DETECTION_MAP = [
     
 def detect_sensor_unit(*args):
     """Detect unit of measurement based on key name."""
+    logging.debug(f"Detecting sensor unit from keys: {args}")
+    
     for key in args:
         found_class = None
         found_unit = None
@@ -86,6 +93,7 @@ def detect_sensor_unit(*args):
         if "," in key:
             found_class,found_unit = key.split(",")
         if found_class or found_unit:
+            
             found_class = found_class.strip()
             found_unit = found_unit.strip()
             if found_class.upper() in SensorDeviceClass.__dict__:
@@ -93,12 +101,15 @@ def detect_sensor_unit(*args):
             else:
                 return [found_unit, None]
             
+        for pattern, device_class, unit in SENSOR_DETECTION_MAP:
+            if re.search(pattern, key_l):
+                _LOGGER.debug(f"Detected sensor unit: {unit} and device class: {device_class} for key: {key}")
+                return [unit, device_class]
+        
         if key_u in SensorDeviceClass.__dict__:
             return [None, SensorDeviceClass.__dict__[key_u]]
         
-        for pattern, device_class, unit in SENSOR_DETECTION_MAP:
-            if re.search(pattern, key_l):
-                return [unit, device_class]
+        
     return [None,None]
 
 def detect_binary_sensor_device_class(*args):
@@ -110,10 +121,13 @@ def detect_binary_sensor_device_class(*args):
         key_l = key.lower()
         key_u = key.upper()
         
-        if key_u in BinarySensorDeviceClass.__dict__:
-            return BinarySensorDeviceClass.__dict__[key_u]
-        
         for pattern, device_class in BINARY_SENSOR_DETECTION_MAP:
             if re.search(pattern, key_l):
+                _LOGGER.debug(f"Detected binary sensor device class: {device_class} for key: {key}")
                 return device_class
+        
+        if key_u in BinarySensorDeviceClass.__dict__:
+            _LOGGER.debug(f"Detected binary sensor device class: {BinarySensorDeviceClass.__dict__[key_u]} for key: {key}")
+            return BinarySensorDeviceClass.__dict__[key_u]
+        
     return None

@@ -83,7 +83,7 @@ class ChirpstackHttpView(HomeAssistantView):
             
             # Parse the JSON data
             data = await request.json()
-            _LOGGER.debug(f"Received webhook data: {json.dumps(data)[:200]}...")
+            _LOGGER.debug(f"Received webhook data: {json.dumps(data)}...")
             
             # Extract device info
             if "deviceInfo" not in data:
