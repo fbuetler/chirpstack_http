@@ -23,13 +23,6 @@ A Home Assistant integration that allows you to receive LoRaWAN device data from
 
 ## Installation
 
-### HACS (Recommended)
-
-1. Ensure [HACS](https://hacs.xyz/) is installed in your Home Assistant instance.
-2. Search for "ChirpStack HTTP Integration" in the HACS store.
-3. Install the integration.
-4. Restart Home Assistant.
-
 ### Manual Installation
 
 1. Download the latest release from the [releases page][releases].
