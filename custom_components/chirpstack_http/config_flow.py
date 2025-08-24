@@ -3,6 +3,7 @@ import voluptuous as vol
 
 DOMAIN = "chirpstack_http"
 
+
 class ChirpstackHttpConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
@@ -20,15 +21,21 @@ class ChirpstackHttpConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data={
                     "url_suffix": url_suffix,
                     "header_name": header_name,
-                    "header_value": header_value
-                }
+                    "header_value": header_value,
+                },
             )
 
         # Show configuration form
-        schema = vol.Schema({
-            vol.Required("url_suffix", default="chirpstack"): str,
-            vol.Optional("header_name", description="Optional authentication header name"): str,
-            vol.Optional("header_value", description="Optional authentication header value"): str,
-        })
+        schema = vol.Schema(
+            {
+                vol.Required("url_suffix", default="chirpstack"): str,
+                vol.Optional(
+                    "header_name", description="Optional authentication header name"
+                ): str,
+                vol.Optional(
+                    "header_value", description="Optional authentication header value"
+                ): str,
+            }
+        )
 
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
