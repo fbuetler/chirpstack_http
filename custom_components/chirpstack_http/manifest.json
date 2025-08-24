@@ -2,6 +2,7 @@
   "domain": "chirpstack_http",
   "name": "ChirpStack HTTP Integration",
   "version": "0.0.2",
+  "integration_type": "hub",
   "requirements": [],
   "dependencies": [
     "http"
