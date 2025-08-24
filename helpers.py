@@ -5,6 +5,7 @@ from homeassistant.const import (
     UnitOfElectricPotential,
 )
 from homeassistant.const import (
+    UnitOfPressure,
     PERCENTAGE,
     SIGNAL_STRENGTH_DECIBELS,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
@@ -20,6 +21,7 @@ DOMAIN = "chirpstack_http"
 SENSOR_DETECTION_MAP = [
     [r"temp", SensorDeviceClass.TEMPERATURE, UnitOfTemperature.CELSIUS],
     [r"humid", SensorDeviceClass.HUMIDITY, PERCENTAGE],
+    [r"(press|baro)", SensorDeviceClass.PRESSURE, UnitOfPressure.HPA],
     [r"battery", SensorDeviceClass.BATTERY, PERCENTAGE],
     [r"voltage", SensorDeviceClass.VOLTAGE, UnitOfElectricPotential.VOLT],
     [r"rssi", SensorDeviceClass.SIGNAL_STRENGTH, SIGNAL_STRENGTH_DECIBELS_MILLIWATT],
