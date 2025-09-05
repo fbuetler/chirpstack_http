@@ -109,7 +109,7 @@ class ChirpstackHttpView(HomeAssistantView):
     async def post(self, request):
         """Handle POST requests for ChirpStack uplinks."""
         try:
-            self.handle(request)
+            await self.handle(request)
         except Exception as e:
             _LOGGER.exception(f"Error processing webhook: {e}")
             return self.json(
