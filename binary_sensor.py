@@ -1,9 +1,12 @@
-"""Binary sensor platform for ChirpStack HTTP integration."""
+"""Binary sensor platform for the ChirpStack HTTP integration."""
 
 import logging
 
-from homeassistant import config_entries
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntity,
+    BinarySensorDeviceClass,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
@@ -12,7 +15,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from .const import (
     DOMAIN,
     PENDING_BINARY_SENSORS_KEY,
-    ADD_BINARY_SENSOR_ENTITIES_KEY,
+    ADD_BINARY_SENSOR_ENTITIES_FUNC_KEY,
     CS_DEVICE_NAME_KEY,
     CS_TENANT_NAME_KEY,
     CS_TENANT_NAME_DEFAULT,
@@ -26,7 +29,14 @@ _LOGGER = logging.getLogger(__name__)
 class ChirpstackBinarySensor(BinarySensorEntity, RestoreEntity):
     """Representation of a ChirpStack binary sensor."""
 
-    def __init__(self, device_id, device_class, name, unique_id, device_info):
+    def __init__(
+        self,
+        name: str,
+        unique_id: str,
+        device_id: str,
+        device_class: BinarySensorDeviceClass,
+        device_info: dict[str, str],
+    ):
         """Initialize the binary sensor."""
         self._device_id = device_id
         self._attr_name = name
@@ -79,7 +89,7 @@ class ChirpstackBinarySensor(BinarySensorEntity, RestoreEntity):
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: config_entries.ConfigEntry,
+    entry: ConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ):
     """Set up the binary sensor platform."""

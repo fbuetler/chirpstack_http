@@ -3,8 +3,8 @@
 import re
 import logging
 
-from homeassistant import config_entries
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
@@ -13,7 +13,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from .const import (
     DOMAIN,
     PENDING_SENSORS_KEY,
-    ADD_SENSOR_ENTITIES_KEY,
+    ADD_SENSOR_ENTITIES_FUNC_KEY,
     CS_DEVICE_NAME_KEY,
     CS_TENANT_NAME_KEY,
     CS_TENANT_NAME_DEFAULT,
@@ -24,11 +24,18 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-# Simplified sensor class
 class ChirpstackSensor(SensorEntity, RestoreEntity):
     """Representation of a ChirpStack sensor."""
 
-    def __init__(self, device_id, name, device_class, unit, unique_id, device_info):
+    def __init__(
+        self,
+        name: str,
+        unique_id: str,
+        device_id: str,
+        device_class: SensorDeviceClass,
+        device_info: dict[str, str],
+        unit: str,
+    ):
         """Initialize the sensor."""
         self._device_id = device_id
         self._attr_name = name
@@ -92,7 +99,7 @@ class ChirpstackSensor(SensorEntity, RestoreEntity):
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: config_entries.ConfigEntry,
+    entry: ConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ):
     """Set up the sensor platform."""

@@ -82,7 +82,14 @@ def sanitize_value(value, key=None):
 class ChirpstackHttpView(HomeAssistantView):
     """View to handle ChirpStack webhook requests."""
 
-    def __init__(self, hass, entry_id, url_suffix, header_name=None, header_value=None):
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry_id,
+        url_suffix,
+        header_name=None,
+        header_value=None,
+    ):
         """Initialize the webhook view."""
         self.hass = hass
         self.entry_id = entry_id

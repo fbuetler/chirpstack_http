@@ -19,7 +19,7 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-SENSOR_DETECTION_MAP = [
+SENSOR_DETECTION_MAP: list[tuple[str, SensorDeviceClass, str]] = [
     [r"temp", SensorDeviceClass.TEMPERATURE, UnitOfTemperature.CELSIUS],
     [r"humid", SensorDeviceClass.HUMIDITY, PERCENTAGE],
     [r"(press|baro)", SensorDeviceClass.PRESSURE, UnitOfPressure.HPA],
@@ -34,7 +34,7 @@ SENSOR_DETECTION_MAP = [
     ],
 ]
 
-BINARY_SENSOR_DETECTION_MAP = [
+BINARY_SENSOR_DETECTION_MAP: list[tuple[str, BinarySensorDeviceClass]] = [
     [
         r"closed|open",
         BinarySensorDeviceClass.DOOR,
@@ -63,7 +63,7 @@ BINARY_SENSOR_DETECTION_MAP = [
 ]
 
 
-def detect_sensor_unit(*args):
+def detect_sensor_unit(*args) -> tuple[str, SensorDeviceClass]:
     """Detect unit of measurement based on key name."""
     logging.debug(f"Detecting sensor unit from keys: {args}")
 
@@ -100,7 +100,7 @@ def detect_sensor_unit(*args):
     return [None, None]
 
 
-def detect_binary_sensor_device_class(*args):
+def detect_binary_sensor_device_class(*args) -> BinarySensorDeviceClass:
     """Detect unit of measurement based on key name."""
     for key in args:
 

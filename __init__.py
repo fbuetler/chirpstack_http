@@ -2,7 +2,6 @@ from datetime import timedelta
 import logging
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.typing import ConfigType
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.helpers.storage import Store
@@ -72,7 +71,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         ChirpstackHttpView(hass, entry_id, url_suffix, header_name, header_value)
     )
 
-    # Set up platforms
+    # Set up platforms - this trigger async_setup_entry in the sensors
+    # https://developers.home-assistant.io/docs/creating_component_generic_discovery
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
     return True
