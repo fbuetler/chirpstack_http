@@ -9,8 +9,8 @@ DEVICES_KEY = "devices"
 PENDING_SENSORS_KEY = "pending_sensors"
 PENDING_BINARY_SENSORS_KEY = "pending_binary_sensors"
 
-ADD_BINARY_SENSOR_ENTITIES_KEY = "_platform_binary_sensor"
-ADD_SENSOR_ENTITIES_KEY = "_platform_sensor"
+ADD_BINARY_SENSOR_ENTITIES_FUNC_KEY = "_platform_binary_sensor"
+ADD_SENSOR_ENTITIES_FUNC_KEY = "_platform_sensor"
 
 CS_DEVICE_NAME_KEY = "deviceName"
 CS_DEVICE_PROFILE_NAME_DEFAULT = "Unknown"

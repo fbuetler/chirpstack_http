@@ -107,7 +107,7 @@ async def async_setup_entry(
     _LOGGER.debug(f"Setting up ChirpStack sensor platform for entry {entry_id}")
 
     # Store the add_entities function
-    hass.data[DOMAIN][entry_id][ADD_SENSOR_ENTITIES_KEY] = async_add_entities
+    hass.data[DOMAIN][entry_id][ADD_SENSOR_ENTITIES_FUNC_KEY] = async_add_entities
 
     # Add any pending sensors
     pending_sensors = hass.data[DOMAIN][entry_id].get("pending_sensors", [])
