@@ -6,6 +6,7 @@ import json
 from homeassistant.core import HomeAssistant
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from .sensor import ChirpstackSensor
 from .binary_sensor import ChirpstackBinarySensor
@@ -47,7 +48,7 @@ def flatten_dict(d, parent_key="", sep="_"):
     return dict(items)
 
 
-def sanitize_value(value, key=None):
+def sanitize_value(value, key=None) -> StateType | bool:
     """Convert value to proper type and format."""
     if isinstance(value, bool):
         # Already boolean
@@ -159,7 +160,7 @@ class ChirpstackHttpView(HomeAssistantView):
         }
 
         hass_data: dict = self.hass.data[DOMAIN][self.entry_id]
-        new_sensors, new_binary_sensors = self.process(
+        new_sensors, new_binary_sensors = self.create_or_update_sensor(
             hass_data, dev_eui, device_info, flat_data
         )
 
@@ -206,7 +207,7 @@ class ChirpstackHttpView(HomeAssistantView):
 
         return None
 
-    def process(
+    def create_or_update_sensor(
         self,
         hass_data: dict,
         device_id: str,
@@ -255,7 +256,7 @@ class ChirpstackHttpView(HomeAssistantView):
                 device_class = detect_binary_sensor_device_class(*key_type_hints)
                 _LOGGER.info(f"Creating binary sensor: {name} = {sanitized_value}")
                 entity = ChirpstackBinarySensor(
-                    name, unique_id, device_id, device_class, device_info
+                    device_id, unique_id, name, device_class, device_info
                 )
                 new_binary_sensors.append(entity)
             else:
@@ -263,11 +264,11 @@ class ChirpstackHttpView(HomeAssistantView):
                 unit, device_class = detect_sensor_unit(*key_type_hints)
                 _LOGGER.info(f"Creating sensor: {name} = {sanitized_value} {unit}")
                 entity = ChirpstackSensor(
-                    name, unique_id, device_id, device_class, device_info, unit
+                    device_id, unique_id, name, device_class, device_info, unit
                 )
                 new_sensors.append(entity)
 
-            entity.set_initial_value(sanitized_value)
+            entity.set_initial_state(sanitized_value)
 
             # Store in devices dict
             hass_data[DEVICES_KEY].setdefault(device_id, {})[key] = entity
