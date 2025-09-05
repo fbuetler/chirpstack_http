@@ -1,0 +1,32 @@
+DOMAIN = "chirpstack_http"
+
+STORE_KEY = "store"
+STORAGE_KEY = f"{DOMAIN}.device_states"
+
+SENSORS_KEY = "sensors"
+BINARY_SENSORS_KEY = "binary_sensors"
+DEVICES_KEY = "devices"
+PENDING_SENSORS_KEY = "pending_sensors"
+PENDING_BINARY_SENSORS_KEY = "pending_binary_sensors"
+
+ADD_BINARY_SENSOR_ENTITIES_KEY = "_platform_binary_sensor"
+ADD_SENSOR_ENTITIES_KEY = "_platform_sensor"
+
+CS_DEVICE_NAME_KEY = "deviceName"
+CS_DEVICE_PROFILE_NAME_DEFAULT = "Unknown"
+CS_DEVICE_PROFILE_NAME_KEY = "deviceProfileName"
+CS_GATEWAY_ID_DEFAULT = "unknown"
+CS_GATEWAY_ID_KEY = "gatewayId"
+CS_TENANT_NAME_DEFAULT = "Chirpstack"
+CS_TENANT_NAME_KEY = "tenantName"
+CS_DEVICE_INFO_KEY = "deviceInfo"
+CS_DEVICE_EUI_KEY = "devEui"
+CS_OBJECT_KEY = "object"
+CS_RX_INFO_KEY = "rxInfo"
+CS_TYPE_REF_KEY = "type_ref"
+
+API_HEADER_NAME_KEY = "header_name"
+API_HEADER_VALUE_KEY = "header_value"
+API_URL_PREFIX = "/api/chirpstack_http"
+API_URL_SUFFIX_DEFAULT = "chirpstack"
+API_URL_SUFFIX_KEY = "url_suffix"

@@ -1,17 +1,27 @@
 """Sensor platform for the ChirpStack HTTP integration."""
 
-from homeassistant.components.sensor import (
-    SensorEntity,
-    SensorDeviceClass,
-    SensorStateClass,
-)
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.restore_state import RestoreEntity
 import re
 import logging
 
+from homeassistant import config_entries
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
+
+from .const import (
+    DOMAIN,
+    PENDING_SENSORS_KEY,
+    ADD_SENSOR_ENTITIES_KEY,
+    CS_DEVICE_NAME_KEY,
+    CS_TENANT_NAME_KEY,
+    CS_TENANT_NAME_DEFAULT,
+    CS_DEVICE_PROFILE_NAME_KEY,
+    CS_DEVICE_PROFILE_NAME_DEFAULT,
+)
+
 _LOGGER = logging.getLogger(__name__)
-DOMAIN = "chirpstack_http"
 
 
 # Simplified sensor class
@@ -30,9 +40,11 @@ class ChirpstackSensor(SensorEntity, RestoreEntity):
         # Create device info
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, device_id)},
-            name=device_info.get("deviceName", f"Device {device_id}"),
-            manufacturer=device_info.get("tenantName", "ChirpStack"),
-            model=device_info.get("deviceProfileName", "Unknown"),
+            name=device_info.get(CS_DEVICE_NAME_KEY, f"Device {device_id}"),
+            manufacturer=device_info.get(CS_TENANT_NAME_KEY, CS_TENANT_NAME_DEFAULT),
+            model=device_info.get(
+                CS_DEVICE_PROFILE_NAME_KEY, CS_DEVICE_PROFILE_NAME_DEFAULT
+            ),
         )
 
         # Debug logging
@@ -78,18 +90,21 @@ class ChirpstackSensor(SensorEntity, RestoreEntity):
         await super().async_added_to_hass()
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the binary sensor platform."""
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: config_entries.ConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+):
+    """Set up the sensor platform."""
     entry_id = entry.entry_id
-    _LOGGER.debug(f"Setting up ChirpStack binary sensor platform for entry {entry_id}")
+    _LOGGER.debug(f"Setting up ChirpStack sensor platform for entry {entry_id}")
 
     # Store the add_entities function
-    hass.data[DOMAIN][entry_id]["_platform_sensor"] = async_add_entities
+    hass.data[DOMAIN][entry_id][ADD_SENSOR_ENTITIES_KEY] = async_add_entities
 
     # Add any pending sensors
-    if hass.data[DOMAIN][entry_id].get("pending_sensors", []):
-        _LOGGER.debug(
-            f"Adding {len(hass.data[DOMAIN][entry_id]['pending_sensors'])} pending sensors"
-        )
-        async_add_entities(hass.data[DOMAIN][entry_id]["pending_sensors"])
-        hass.data[DOMAIN][entry_id]["pending_sensors"] = []
+    pending_sensors = hass.data[DOMAIN][entry_id].get("pending_sensors", [])
+    if pending_sensors:
+        _LOGGER.debug(f"Adding {len(pending_sensors)} pending sensors")
+        async_add_entities(pending_sensors)
+        hass.data[DOMAIN][entry_id][PENDING_SENSORS_KEY] = []

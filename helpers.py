@@ -1,4 +1,6 @@
 import re
+import logging
+
 from homeassistant.const import (
     UnitOfConductivity,
     UnitOfTemperature,
@@ -12,11 +14,10 @@ from homeassistant.const import (
 )
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
-import logging
 
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
-DOMAIN = "chirpstack_http"
 
 SENSOR_DETECTION_MAP = [
     [r"temp", SensorDeviceClass.TEMPERATURE, UnitOfTemperature.CELSIUS],

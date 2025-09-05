@@ -2,13 +2,34 @@
 
 import logging
 import json
-import re
+
 from homeassistant.components.http import HomeAssistantView
+
 from .sensor import ChirpstackSensor
 from .binary_sensor import ChirpstackBinarySensor
 from .helpers import detect_sensor_unit, detect_binary_sensor_device_class
+from .const import (
+    ADD_BINARY_SENSOR_ENTITIES_KEY,
+    ADD_SENSOR_ENTITIES_KEY,
+    API_URL_PREFIX,
+    CS_DEVICE_EUI_KEY,
+    CS_DEVICE_INFO_KEY,
+    CS_DEVICE_NAME_KEY,
+    CS_DEVICE_PROFILE_NAME_DEFAULT,
+    CS_DEVICE_PROFILE_NAME_KEY,
+    CS_GATEWAY_ID_DEFAULT,
+    CS_GATEWAY_ID_KEY,
+    CS_OBJECT_KEY,
+    CS_RX_INFO_KEY,
+    CS_TENANT_NAME_DEFAULT,
+    CS_TENANT_NAME_KEY,
+    CS_TYPE_REF_KEY,
+    DEVICES_KEY,
+    DOMAIN,
+    PENDING_BINARY_SENSORS_KEY,
+    PENDING_SENSORS_KEY,
+)
 
-DOMAIN = "chirpstack_http"
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -65,9 +86,12 @@ class ChirpstackHttpView(HomeAssistantView):
         """Initialize the webhook view."""
         self.hass = hass
         self.entry_id = entry_id
-        self.url = f"/api/chirpstack_http/{url_suffix}"
-        self.name = f"api:chirpstack_http:{url_suffix}"
+
+        # view
+        self.url = f"{API_URL_PREFIX}/{url_suffix}"
         self.requires_auth = False
+
+        # custom header
         self.header_name = header_name
         self.header_value = header_value
 
@@ -94,16 +118,16 @@ class ChirpstackHttpView(HomeAssistantView):
 
             # Parse the JSON data
             data = await request.json()
-            _LOGGER.debug(f"Received webhook data: {json.dumps(data)}...")
+            _LOGGER.debug(f"Received webhook data: '{json.dumps(data)}'")
 
             # Extract device info
-            if "deviceInfo" not in data:
+            if CS_DEVICE_INFO_KEY not in data:
                 return self.json(
                     {"status": "error", "message": "No deviceInfo in payload"}
                 )
 
-            device_info_raw = data["deviceInfo"]
-            dev_eui = device_info_raw.get("devEui")
+            device_info_raw = data[CS_DEVICE_INFO_KEY]
+            dev_eui = device_info_raw.get(CS_DEVICE_EUI_KEY)
 
             if not dev_eui:
                 return self.json(
@@ -111,7 +135,7 @@ class ChirpstackHttpView(HomeAssistantView):
                 )
 
             # Extract object data (sensor readings)
-            object_data = data.get("object", {})
+            object_data = data.get(CS_OBJECT_KEY, {})
             if not object_data or not isinstance(object_data, dict):
                 return self.json(
                     {"status": "ignored", "message": "No valid object data"}
@@ -121,28 +145,31 @@ class ChirpstackHttpView(HomeAssistantView):
             flat_data = flatten_dict(object_data)
 
             # Get device metadata
-            rx_info = data.get("rxInfo", [{}])[0]
+            rx_info = data.get(CS_RX_INFO_KEY, [{}])[0]
             device_info = {
-                "deviceName": device_info_raw.get("deviceName", f"Device {dev_eui}"),
-                "tenantName": device_info_raw.get("tenantName", "ChirpStack"),
-                "deviceProfileName": device_info_raw.get(
-                    "deviceProfileName", "Unknown"
+                CS_DEVICE_NAME_KEY: device_info_raw.get(
+                    CS_DEVICE_NAME_KEY, f"Device {dev_eui}"
                 ),
-                "gatewayId": rx_info.get("gatewayId", "unknown"),
+                CS_TENANT_NAME_KEY: device_info_raw.get(
+                    CS_TENANT_NAME_KEY, CS_TENANT_NAME_DEFAULT
+                ),
+                CS_DEVICE_PROFILE_NAME_KEY: device_info_raw.get(
+                    CS_DEVICE_PROFILE_NAME_KEY, CS_DEVICE_PROFILE_NAME_DEFAULT
+                ),
+                CS_GATEWAY_ID_KEY: rx_info.get(
+                    CS_GATEWAY_ID_KEY, CS_GATEWAY_ID_DEFAULT
+                ),
             }
 
             # Initialize device dictionary if needed
             device_id = dev_eui
             hass_data = self.hass.data[DOMAIN][self.entry_id]
-            if device_id not in hass_data.get("devices", {}):
-                hass_data["devices"][device_id] = {}
+            if device_id not in hass_data.get(DEVICES_KEY, {}):
+                hass_data[DEVICES_KEY][device_id] = {}
 
             # Track new entities
             new_sensors = []
             new_binary_sensors = []
-
-            # Get any stored states for this device
-            stored_states = hass_data.get("stored_states", {}).get(device_id, {})
 
             # Process each data point
             for key, raw_value in flat_data.items():
@@ -157,7 +184,7 @@ class ChirpstackHttpView(HomeAssistantView):
                         map(lambda x: x.capitalize(), key.replace("_", " ").split(" "))
                     )
                 )
-                name = f"{device_info['deviceName']} {name_suffix}"
+                name = f"{device_info[CS_DEVICE_NAME_KEY]} {name_suffix}"
 
                 # Sanitize the value
                 sanitized_value = sanitize_value(raw_value, key)
@@ -166,18 +193,17 @@ class ChirpstackHttpView(HomeAssistantView):
                 )
 
                 # Check if entity already exists
-                if key in hass_data["devices"].get(device_id, {}):
+                if key in hass_data[DEVICES_KEY].get(device_id, {}):
                     # Update existing entity
                     _LOGGER.debug(f"Updating existing entity: {name}")
-                    entity = hass_data["devices"][device_id][key]
+                    entity = hass_data[DEVICES_KEY][device_id][key]
                     entity.update_state(sanitized_value)
                     continue
 
-                # Check if we have a stored state for this entity
-                stored_state = stored_states.get(key, {})
-                initial_value = sanitized_value
-
-                detection_keys = [object_data.get("type_ref", {}).get(key, None), key]
+                detection_keys = [
+                    object_data.get(CS_TYPE_REF_KEY, {}).get(key, None),
+                    key,
+                ]
 
                 # Determine if boolean or sensor
                 if isinstance(sanitized_value, bool):
@@ -198,12 +224,12 @@ class ChirpstackHttpView(HomeAssistantView):
                     new_sensors.append(entity)
 
                 # Store in devices dict
-                hass_data["devices"].setdefault(device_id, {})[key] = entity
-                entity.set_initial_value(initial_value)
+                hass_data[DEVICES_KEY].setdefault(device_id, {})[key] = entity
+                entity.set_initial_value(sanitized_value)
 
             # Add new sensors to Home Assistant
             if new_sensors:
-                platform_function = hass_data.get("_platform_sensor")
+                platform_function = hass_data.get(ADD_SENSOR_ENTITIES_KEY)
                 if platform_function:
                     _LOGGER.info(
                         f"Adding {len(new_sensors)} sensors to Home Assistant using {platform_function}"
@@ -217,27 +243,29 @@ class ChirpstackHttpView(HomeAssistantView):
                         _LOGGER.error(f"Error adding sensors: {e}")
                         # Fall back to queuing
                         _LOGGER.info("Falling back to queuing sensors")
-                        hass_data.setdefault("pending_sensors", []).extend(new_sensors)
+                        hass_data.setdefault(PENDING_SENSORS_KEY, []).extend(
+                            new_sensors
+                        )
                 else:
                     _LOGGER.info(
                         f"Queueing {len(new_sensors)} sensors for later addition (platform function not available)"
                     )
-                    hass_data.setdefault("pending_sensors", []).extend(new_sensors)
+                    hass_data.setdefault(PENDING_SENSORS_KEY, []).extend(new_sensors)
                     # Debug what's in the hass_data
                     _LOGGER.debug(f"Current hass_data keys: {list(hass_data.keys())}")
 
             # Add new binary sensors to Home Assistant
             if new_binary_sensors:
-                if "_platform_binary_sensor" in hass_data:
+                if ADD_BINARY_SENSOR_ENTITIES_KEY in hass_data:
                     _LOGGER.info(
                         f"Adding {len(new_binary_sensors)} binary sensors to Home Assistant"
                     )
-                    hass_data["_platform_binary_sensor"](new_binary_sensors)
+                    hass_data[ADD_BINARY_SENSOR_ENTITIES_KEY](new_binary_sensors)
                 else:
                     _LOGGER.info(
                         f"Queueing {len(new_binary_sensors)} binary sensors for later addition"
                     )
-                    hass_data.setdefault("pending_binary_sensors", []).extend(
+                    hass_data.setdefault(PENDING_BINARY_SENSORS_KEY, []).extend(
                         new_binary_sensors
                     )
 
