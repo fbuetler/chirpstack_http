@@ -98,6 +98,7 @@ class ChirpstackHttpView(HomeAssistantView):
         self.entry_id = entry_id
 
         # view
+        self.name = f"{API_URL_PREFIX}/{url_suffix}"
         self.url = f"{API_URL_PREFIX}/{url_suffix}"
         self.requires_auth = False
 
