@@ -54,7 +54,6 @@ def sanitize_value(value, key=None) -> StateType | bool:
         # Already boolean
         return value
 
-    # Check for string booleans
     if isinstance(value, str):
         if value.lower() in ["true", "1", "yes", "y", "on"]:
             return True
@@ -63,7 +62,9 @@ def sanitize_value(value, key=None) -> StateType | bool:
 
     # Handle numeric values
     if isinstance(value, (int, float)):
-        # Already numeric
+        if detect_binary_sensor_device_class(key):
+            # special case: somehow chirpstack converts a 1 to a 1.0
+            return value != 0.0
         return value
 
     if isinstance(value, str):
@@ -289,7 +290,7 @@ class ChirpstackHttpView(HomeAssistantView):
 
         add_entities_func: AddConfigEntryEntitiesCallback = hass_data.get(func_key)
         if add_entities_func:
-            _LOGGER.info(f"Adding {len(new_sensors)} {type} using {add_entities_func}")
+            _LOGGER.info(f"Adding {len(new_sensors)} {type}")
             try:
                 add_entities_func(new_sensors)
                 _LOGGER.info(

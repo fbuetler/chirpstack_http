@@ -15,8 +15,6 @@ from homeassistant.const import (
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 
-from .const import DOMAIN
-
 _LOGGER = logging.getLogger(__name__)
 
 SENSOR_DETECTION_MAP: list[tuple[str, SensorDeviceClass, str]] = [
